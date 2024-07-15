@@ -1,39 +1,71 @@
 //I added comments so you can modify
 //let's cook :D ;D
 
-async function handleRadiosAndTextareas() {
+async function handleRadiosAndTextAreas() {
   // Check and confirm all radios are checked
   const stronglyAgreeRadios = document.querySelectorAll("input[value='5']");
-  const allRadiosChecked = await Promise.all(
-    Array.from(stronglyAgreeRadios).map(radio => new Promise(resolve => {
-      radio.checked = true;
-      resolve(radio.checked); // Ensure checked state before resolving
-    }))
+  stronglyAgreeRadios.forEach((radio) => (radio.checked = true));
+
+  // Function to fill textareas
+
+  function generateResponses(question) {
+    if (question.includes("like best")) {
+      return "What I liked best about the course was the instructor's ability to explain complex concepts in an understandable way. The use of real-world examples made the material more relatable and engaging.";
+    } else if (question.includes("improvement")) {
+      return "To improve the course, I would suggest incorporating more interactive elements such as group projects or hands-on workshops. This could enhance the practical application of the theoretical concepts learned.";
+    } else {
+      return "The course was well-structured and informative, providing a comprehensive overview of the subject matter. The teaching methods used were effective in facilitating understanding and encouraging critical thinking.";
+    }
+  }
+
+  // Handle textareas and check fill
+
+  const textAreaCards = document.querySelectorAll(
+    ".card-content textarea[name^='OQ']"
   );
 
-  if (!allRadiosChecked.every(checked => checked)) {
-    console.error("Not all radios were checked successfully.");
-    return;
-  }
+  let filledTextAreas = 0;
 
-  // Fill in textareas
-  for (let i = 1; i <= 4; i++) {
-    const textarea = document.querySelector(`.card-content textarea[name='OQ${i}']`);
-    const possibleValues = ["Great", "Everything", "Perfect"];
-    const randomValue = possibleValues[Math.floor(Math.random() * possibleValues.length)];
-    textarea.value = randomValue;
-  }
+  textAreaCards.forEach((textArea) => {
+    //get text card and question
+    const questionCard = textArea.closest(".card");
+    const questionText = questionCard
+      .querySelector(".card-title")
+      .textContent.trim();
 
-  // Check if all textareas have values
-  const allTextareas = document.querySelectorAll(`.card-content textarea[name^='OQ']`);
-  const allTextareasFilled = Array.from(allTextareas).every(textarea => textarea.value !== "");
+    //Respond and set Text area
+    const response = generateResponses(questionText);
+    textArea.value = response;
+    filledTextAreas++;
+  });
 
-  if (allTextareasFilled) {
-    console.log("All done, Hello from Michael!");
+  console.log(
+    "All questions answered, Hello from Michael! \n This is Michael's way of being Michael :D"
+  );
+
+  const submitBtn = document.querySelectorAll("#submitbtn");
+  if (submitBtn) {
+    const userConfirmation = confirm("Do you want to submit the form?");
+    if (userConfirmation) {
+      submitBtn.click();
+      console.log("Form submitted successfully.");
+    } else {
+      console.log("Form submission cancelled by user");
+    }
   } else {
-    console.error("Some textareas remain empty.");
+    console.error("Submit button not found.");
   }
-  console.log("This is Michael's way of being Michael :D")
+
+  return {
+    radiosChecked: stronglyAgreeRadios.length,
+    textAreasFilled: filledTextAreas,
+  };
 }
 
-handleRadiosAndTextareas(); // Initiate the asynchronous process
+//Initiate automation and log response
+handleRadiosAndTextAreas().then((result) => {
+  console.log("Operation completed successfully.\n", result);
+  console.log(
+    `Checked ${result.radiosChecked} radio buttons and filled ${result.textAreasFilled} textareas.`
+  );
+});
