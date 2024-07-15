@@ -9,3 +9,7 @@ type
 ```
 in console
 ### Then paste the code from sts.js
+### Added submit functionality, now form can be submitted by the automation if the user allow it
+
+
+### [IMPROVEMENT] Text area fields are more logical now
